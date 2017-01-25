@@ -1,12 +1,12 @@
 groups:
 - name: all
   jobs:
-  - get-product-version
+  - upload-bosh-releases
   - deploy
   - broker-registrar
 - name: deploy
   jobs:
-  - get-product-version
+  - upload-bosh-releases
   - deploy
 - name: errands
   jobs:
@@ -91,13 +91,14 @@ jobs:
           OUTPUT_DIR: versions
           VAULT_ADDR: {{vault-address}}
           VAULT_TOKEN: {{vault-token}}
+          FOUNDATION_NAME: {{foundation-name}}
           BOSH_VAULT_HASH: {{bosh-vault-hash}}
         inputs:
         - name: pipeline-repo
         - name: omg-cli
         - name: omg-product-bundle
-        outputs:
-        - name: versions
+        # outputs:
+        # - name: versions
     # - task: update-vault-with-version
     #   config:
     #     platform: linux
@@ -119,12 +120,12 @@ jobs:
   plan:
     - get: pipeline-repo
     - get: omg-cli
-      passed: [get-product-version]
+      passed: [upload-bosh-releases]
       params:
         globs:
         - omg-linux
     - get: omg-product-bundle
-      passed: [get-product-version]
+      passed: [upload-bosh-releases]
       trigger: true
       params:
         globs:

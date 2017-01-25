@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -ex
 
+project_dir=$(greadlink -f "$(dirname $0)/..")
+# project_dir=$(readlink -f "$(dirname $0)/..")
+
+source $project_dir/ci/utils/load-bosh-env.sh
+
 # if [[ -z $CONCOURSE_URI || -z $CONCOURSE_TARGET || -z $CONCOURSE_USER || -z $CONCOURSE_PASSWORD || \
 #       -z $VAULT_ADDR || -z $VAULT_TOKEN || \
 #       -z $GIT_PRIVATE_KEY_PATH || -z $CONFIG_REPO || -z $FOUNDATION_NAME ]]; then
@@ -21,14 +26,12 @@ set -ex
 
 # PRODUCT_NAME=p-redis
 
-source ../ci/utils/load-bosh-env.sh
-
 echo "Updating $FOUNDATION_NAME management pipeline on $CONCOURSE_TARGET concourse."
 
 fly -t $CONCOURSE_TARGET login -c $CONCOURSE_URI -u $CONCOURSE_USER -p $CONCOURSE_PASSWORD
 
 fly -t $CONCOURSE_TARGET set-pipeline -p $PRODUCT_NAME-$FOUNDATION_NAME \
-							--config="ci/pipeline.yml" \
+              --config="ci/pipeline.yml" \
               --load-vars-from=ci/defaults/$CPI.yml \
               --var="bosh-url=$BOSH_URL" \
               --var="bosh-user=$BOSH_USER" \
@@ -36,12 +39,12 @@ fly -t $CONCOURSE_TARGET set-pipeline -p $PRODUCT_NAME-$FOUNDATION_NAME \
               --var="bosh-client-id=$BOSH_CLIENT" \
               --var="bosh-client-secret=$BOSH_CLIENT_SECRET" \
               --var="bosh-cacert=$BOSH_CA_CERT" \
-							--var="foundation-name=$FOUNDATION_NAME" \
-							--var="pipeline-repo=$PIPELINE_REPO" \
+              --var="foundation-name=$FOUNDATION_NAME" \
+              --var="pipeline-repo=$PIPELINE_REPO" \
               --var="pipeline-repo-brunch=master" \
               --var="product-version=$PRODUCT_VERSION" \
-							--var="vault-address=$VAULT_ADDR" \
-							--var="vault-token=$VAULT_TOKEN" \
+              --var="vault-address=$VAULT_ADDR" \
+              --var="vault-token=$VAULT_TOKEN" \
               --var="deployment-name=$PRODUCT_NAME-$FOUNDATION_NAME" \
               --var="pivotal-network-api-token=$PIVOTAL_NETWORK_API_TOKEN" \
               --var="product-name=pivotal-redis-service" \
