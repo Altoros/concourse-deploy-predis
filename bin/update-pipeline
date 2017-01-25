@@ -1,8 +1,16 @@
 #!/usr/bin/env bash
 set -ex
 
-project_dir=$(greadlink -f "$(dirname $0)/..")
-# project_dir=$(readlink -f "$(dirname $0)/..")
+if [ "$(uname)" == "Darwin" ]; then
+    project_dir=$(greadlink -f "$(dirname $0)/..")
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+    project_dir=$(readlink -f "$(dirname $0)/..")
+else
+    echo "Error: Unknown platform - $(uname -a)"
+    exit 1
+fi
+
+# 
 
 source $project_dir/ci/utils/load-bosh-env.sh
 
