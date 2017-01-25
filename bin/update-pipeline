@@ -34,8 +34,8 @@ fly -t $CONCOURSE_TARGET set-pipeline -p $PRODUCT_NAME-$FOUNDATION_NAME \
               --config="ci/pipeline.yml" \
               --load-vars-from=ci/defaults/$CPI.yml \
               --var="bosh-url=$BOSH_URL" \
-              --var="bosh-user=$BOSH_USER" \
-              --var="bosh-pass=$BOSH_PASS" \
+              --var="bosh-user=$BOSH_USERNAME" \
+              --var="bosh-pass=$BOSH_PASSWORD" \
               --var="bosh-client-id=$BOSH_CLIENT" \
               --var="bosh-client-secret=$BOSH_CLIENT_SECRET" \
               --var="bosh-cacert=$BOSH_CA_CERT" \

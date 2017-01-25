@@ -12,8 +12,8 @@ omg-cli/omg-linux register-plugin \
 
 omg-cli/omg-linux deploy-product \
   --bosh-url  $BOSH_URL \
-  --bosh-user $BOSH_USER \
-  --bosh-pass $BOSH_PASS \
+  --bosh-user $BOSH_USERNAME \
+  --bosh-pass $BOSH_PASSWORD \
   --print-manifest \
   --ssl-ignore \
   $PRODUCT_PLUGIN \
