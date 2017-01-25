@@ -1,0 +1,18 @@
+# Concourse connection info
+export CONCOURSE_URI=
+export CONCOURSE_TARGET=
+export CONCOURSE_USER=
+export CONCOURSE_PASSWORD=
+
+# Vault info
+export VAULT_ADDR=
+export VAULT_TOKEN=
+
+# CF name
+export FOUNDATION_NAME=
+
+# Do not change this variables
+export PATH=$PATH:$PWD/bin
+
+# Config repo git info
+export PIPELINE_REPO=https://github.com/Altoros/concourse-deploy-redis.git

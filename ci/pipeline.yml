@@ -1,0 +1,214 @@
+groups:
+- name: all
+  jobs:
+  - get-product-version
+  - deploy
+  - broker-registrar
+- name: deploy
+  jobs:
+  - get-product-version
+  - deploy
+- name: errands
+  jobs:
+  - broker-registrar
+
+resources:
+- name: {{product-name}}
+  type: pivnet
+  check_every: 4h
+  source:
+    api_token: {{pivotal-network-api-token}}
+    product_slug: {{product-slug}}
+    # TODO: add vault support here
+    product_version: {{product-version}}
+    sort_by: semver
+- name: pipeline-repo
+  type: git
+  check_every: 4h
+  source:
+    uri: {{pipeline-repo}}
+    branch: {{pipeline-repo-brunch}}
+- name: omg-cli
+  type: github-release
+  check_every: 4h
+  source:
+    user: enaml-ops
+    repository: omg-cli
+- name: omg-product-bundle
+  type: github-release
+  check_every: 4h
+  source:
+    user: enaml-ops
+    repository: omg-product-bundle
+- name: {{deployment-name}}
+  type: bosh-deployment
+  source:
+    # TODO: add vault support here
+    ca_cert: {{bosh-cacert}}
+    client_id: {{bosh-client-id}}
+    client_secret: {{bosh-client-secret}}
+    deployment: {{deployment-name}}
+    target: {{bosh-url}}
+- name: stemcells
+  type: pivnet
+  source:
+    # TODO: add vault support here
+    api_token: {{pivotal-network-api-token}}
+    product_slug: stemcells
+    product_version: {{stemcell-version}}
+
+resource_types:
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+
+jobs:
+- name: get-product-version
+  plan:
+    - get: pipeline-repo
+    - get: omg-cli
+      params:
+        globs:
+        - omg-linux
+    - get: omg-product-bundle
+      trigger: true
+      params:
+        globs:
+        - {{omg-product-bundle-glob}}
+    - task: get-product-version
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: virtmerlin/deploy-worker
+        run:
+          path: pipeline-repo/ci/tasks/get-version-from-plugin.sh
+        params:
+          PRODUCT_PLUGIN: {{product-plugin}}
+          OUTPUT_DIR: versions
+        inputs:
+        - name: pipeline-repo
+        - name: omg-cli
+        - name: omg-product-bundle
+        outputs:
+        - name: versions
+    - task: update-vault-with-version
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: virtmerlin/deploy-worker
+        run:
+          path: concourse-deploy-rabbitmq/ci/tasks/update-vault-with-version.sh
+        params:
+          VAULT_ADDR: {{vault-address}}
+          VAULT_TOKEN: {{vault-token}}
+          VAULT_PROPS_PATH: {{vault-props-path}}
+        inputs:
+        - name: concourse-deploy-rabbitmq
+        - name: versions
+
+- name: deploy
+  plan:
+    - get: pipeline-repo
+    - get: omg-cli
+      passed: [get-product-version]
+      params:
+        globs:
+        - omg-linux
+    - get: omg-product-bundle
+      passed: [get-product-version]
+      trigger: true
+      params:
+        globs:
+        - {{omg-product-slug}} 
+    - get: {{product-name}}
+      params:
+        globs:
+        - {{pivotal-network-glob}}
+    - get: stemcells
+      trigger: true
+      params:
+        globs:
+        - {{stemcell-cpi-glob}}
+    - task: generate-manifest
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: virtmerlin/deploy-worker
+        run:
+          path: pipeline-repo/ci/tasks/generate-manifest.sh
+        params:
+          DEPLOYMENT_NAME: {{deployment-name}}
+          PRODUCT_PLUGIN: {{product-plugin}}
+          STEMCELL_VERSION: {{stemcell-version}}
+          VAULT_ADDR: {{vault-address}}
+          VAULT_TOKEN: {{vault-token}}
+          VAULT_HASH_IP: {{vault-hash-ip}}
+          VAULT_HASH_HOSTVARS: {{vault-hash-hostvars}}
+          VAULT_HASH_MISC: {{vault-hash-props}}
+          VAULT_HASH_PASSWORD: {{vault-hash-passwords}}
+          VAULT_HASH_BOSH: {{bosh-vault-hash}}
+          VAULT_HASH_LIST: {{vault-hash-list}}
+          OUTPUT_DIR: manifest
+        inputs:
+        - name: pipeline-repo
+        - name: omg-cli
+        - name: omg-product-bundle
+        outputs:
+        - name: manifest
+    - task: extract-tile
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: virtmerlin/deploy-worker
+        run:
+          path: pipeline-repo/ci/tasks/extract-tile.sh
+        params:
+          PRODUCT_DIR: {{product-name}}
+          OUTPUT_DIR: extracted-product
+        inputs:
+        - name: pipeline-repo
+        - name: {{product-name}}
+        outputs:
+        - name: extracted-product
+          path: ""
+    - put: {{deployment-name}}
+      params:
+        manifest: manifest/deployment.yml
+        stemcells:
+        - stemcells/bosh-stemcell*.tgz
+        releases:
+        - extracted-product/releases/*.tgz
+- name: broker-registrar
+  plan:
+    - get: pipeline-repo
+    - get: {{deployment-name}}
+      trigger: true
+      passed: [deploy]
+    - task: broker-registrar
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: virtmerlin/deploy-worker
+        run:
+          path: pipeline-repo/ci/tasks/run-errand.sh
+        params:
+          VAULT_ADDR: {{vault-address}}
+          VAULT_TOKEN: {{vault-token}}
+          VAULT_HASH_BOSH: {{bosh-vault-hash}}
+          BOSH_DEPLOYMENT_NAME: {{deployment-name}}
+          BOSH_ERRAND: broker-registrar
+        inputs:
+        - name: pipeline-repo
+        outputs:
