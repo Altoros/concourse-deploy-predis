@@ -18,7 +18,7 @@ meta=$(omg-cli/omg-linux product-meta $PRODUCT_NAME | grep 'release: ')
 
 while read -r line; do
   release_url=$(echo $line | awk '{printf $2}')
-  bosh upload release $release_url
+  bosh upload-release $release_url
 done <<< "$meta"
 
 #eof
