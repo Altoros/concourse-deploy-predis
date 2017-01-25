@@ -1,12 +1,14 @@
 #!/bin/bash -e
 
+project_dir=$(readlink -f "$(dirname $0)/../../..")
+source $project_dir/ci/utils/load-bosh-env.sh
+
 chmod +x omg-cli/omg-linux
 
 omg-cli/omg-linux deploy-product \
-  --bosh-url $(vault read -field=bosh-url $VAULT_HASH_MISC) \
-  --bosh-port $(vault read -field=bosh-port $VAULT_HASH_MISC) \
-  --bosh-user $(vault read -field=bosh-user $VAULT_HASH_MISC) \
-  --bosh-pass $(vault read -field=bosh-pass $VAULT_HASH_MISC) \
+  --bosh-url  $BOSH_URL \
+  --bosh-user $BOSH_USER \
+  --bosh-pass $BOSH_PASS \
   --print-manifest \
   --ssl-ignore \
   $PRODUCT_PLUGIN \

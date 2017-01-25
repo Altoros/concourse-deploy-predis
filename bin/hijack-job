@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+
+JOB_NAME=$1
+COMMAND="${2:-bash}"
+
+fly -t $CONCOURSE_TARGET login -c $CONCOURSE_URI -u $CONCOURSE_USER -p $CONCOURSE_PASSWORD
+
+fly -t $CONCOURSE_TARGET hijack -j $PRODUCT_NAME-$FOUNDATION_NAME/$JOB_NAME $COMMAND

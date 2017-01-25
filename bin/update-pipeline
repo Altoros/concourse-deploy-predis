@@ -21,13 +21,7 @@ set -ex
 
 # PRODUCT_NAME=p-redis
 
-VAULT_HASH_BOSH="secret/rabbitmq-$FOUNDATION_NAME-props"
-BOSH_URL=$(vault read -field=bosh-url   $VAULT_HASH_BOSH)
-BOSH_USER=$(vault read -field=bosh-user $VAULT_HASH_BOSH)
-BOSH_PASS=$(vault read -field=bosh-pass $VAULT_HASH_BOSH)
-BOSH_CLIENT=$(vault read -field=bosh-client-id $VAULT_HASH_BOSH)
-BOSH_CA_CERT=$(vault read -field=bosh-cacert $VAULT_HASH_BOSH)
-BOSH_CLIENT_SECRET=$(vault read -field=bosh-client-secret $VAULT_HASH_BOSH)
+source ../ci/utils/load-bosh-env.sh
 
 echo "Updating $FOUNDATION_NAME management pipeline on $CONCOURSE_TARGET concourse."
 
@@ -52,11 +46,11 @@ fly -t $CONCOURSE_TARGET set-pipeline -p $PRODUCT_NAME-$FOUNDATION_NAME \
               --var="pivotal-network-api-token=$PIVOTAL_NETWORK_API_TOKEN" \
               --var="product-name=pivotal-redis-service" \
               --var="product-slug=p-redis" \
-              --var="omg-product-slug=p-redis-plugin-linux" \
+              --var="omg-product-slug=redis-plugin-linux" \
               --var="pivotal-network-glob=p-redis-*" \
-              --var="omg-product-bundle-glob=p-redis-plugin-linux" \
+              --var="omg-product-bundle-glob=redis-plugin-linux" \
               --var="vault-props-path=secret/$PRODUCT_NAME-$FOUNDATION_NAME-props" \
-              --var="product-plugin=p-redis-plugin-linux" \
+              --var="product-plugin=redis-plugin-linux" \
               --var="bosh-vault-hash=secret/bosh-$FOUNDATION_NAME-props" \
               --var="password-vault-hash=secret/$PRODUCT_NAME-$FOUNDATION_NAME-password" \
               --var="props-vault-hash=secret/$PRODUCT_NAME-$FOUNDATION_NAME-props" \

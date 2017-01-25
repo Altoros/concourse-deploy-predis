@@ -1,23 +1,8 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
+set -e
 
-# BOSH_CLIENT: {{bosh-user}}
-# BOSH_CLIENT_SECRET: {{bosh-pass}}
-# BOSH_CACERT: {{bosh-cacert}}
-# DEPLOYMENT_NAME: {{deployment-name}}
-# PRODUCT_PLUGIN: {{product-plugin}}
-# STEMCELL_VERSION: {{stemcell-version}}
-# VAULT_ADDR: {{vault_addr}}
-# VAULT_HASH_ERT_IP: {{vault_hash_ert_ip}}
-# VAULT_HASH_IP: {{vault_hash_ip}}
-# VAULT_HASH_HOSTVARS: {{vault_hash_hostvars}}
-# VAULT_HASH_MISC: {{vault_hash_misc}}
-# VAULT_HASH_PASSWORD: {{vault_hash_password}}
-# VAULT_TOKEN: {{vault_token}}
-# OUTPUT_DIR: manifest
-
-BOSH_URL=$(vault read -field=bosh-url  $VAULT_HASH_BOSH)
-BOSH_USER=$(vault read -field=bosh-user $VAULT_HASH_BOSH)
-BOSH_PASS=$(vault read -field=bosh-pass $VAULT_HASH_BOSH)
+project_dir=$(readlink -f "$(dirname $0)/../..")
+source $project_dir/ci/utils/load-bosh-env.sh
 
 chmod +x omg-cli/omg-linux
 

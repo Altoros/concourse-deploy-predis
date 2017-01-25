@@ -65,7 +65,7 @@ resource_types:
     tag: latest-final
 
 jobs:
-- name: get-product-version
+- name: upload-bosh-releases
   plan:
     - get: pipeline-repo
     - get: omg-cli
@@ -77,40 +77,43 @@ jobs:
       params:
         globs:
         - {{omg-product-bundle-glob}}
-    - task: get-product-version
+    - task: upload-bosh-releases
       config:
         platform: linux
         image_resource:
           type: docker-image
           source:
-            repository: virtmerlin/deploy-worker
+            repository: allomov/deploy-worker
         run:
-          path: pipeline-repo/ci/tasks/get-version-from-plugin.sh
+          path: pipeline-repo/ci/tasks/opensource/upload-bosh-releases.sh
         params:
           PRODUCT_PLUGIN: {{product-plugin}}
           OUTPUT_DIR: versions
+          VAULT_ADDR: {{vault-address}}
+          VAULT_TOKEN: {{vault-token}}
+          BOSH_VAULT_HASH: {{bosh-vault-hash}}
         inputs:
         - name: pipeline-repo
         - name: omg-cli
         - name: omg-product-bundle
         outputs:
         - name: versions
-    - task: update-vault-with-version
-      config:
-        platform: linux
-        image_resource:
-          type: docker-image
-          source:
-            repository: virtmerlin/deploy-worker
-        run:
-          path: concourse-deploy-rabbitmq/ci/tasks/update-vault-with-version.sh
-        params:
-          VAULT_ADDR: {{vault-address}}
-          VAULT_TOKEN: {{vault-token}}
-          VAULT_PROPS_PATH: {{vault-props-path}}
-        inputs:
-        - name: concourse-deploy-rabbitmq
-        - name: versions
+    # - task: update-vault-with-version
+    #   config:
+    #     platform: linux
+    #     image_resource:
+    #       type: docker-image
+    #       source:
+    #         repository: virtmerlin/deploy-worker
+    #     run:
+    #       path: pipeline-repo/ci/tasks/update-vault-with-version.sh
+    #     params:
+    #       VAULT_ADDR: {{vault-address}}
+    #       VAULT_TOKEN: {{vault-token}}
+    #       VAULT_PROPS_PATH: {{vault-props-path}}
+    #     inputs:
+    #     - name: pipeline-repo
+    #     - name: versions
 
 - name: deploy
   plan:
