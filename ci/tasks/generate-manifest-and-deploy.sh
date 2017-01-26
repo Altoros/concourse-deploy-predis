@@ -15,32 +15,6 @@ SLAVE_INSTANCES=$(($(grep -o "," <<< "$SLAVE_IP" | wc -l)+1))
 MASTER_INSTANCES=$(($(grep -o "," <<< "$MASTER_IP" | wc -l)+1))
 POOL_INSTANCES=$((MASTER_INSTANCES + SLAVE_INSTANCES))
 
-# chmod +x omg-cli/omg-linux
-
-# omg-cli/omg-linux register-plugin \
-#   -type product \
-#   -pluginpath omg-product-bundle/$PRODUCT_PLUGIN
-
-# omg-cli/omg-linux deploy-product \
-#   --bosh-url  $BOSH_URL \
-#   --bosh-user $BOSH_USERNAME \
-#   --bosh-pass $BOSH_PASSWORD \
-#   --print-manifest \
-#   --ssl-ignore \
-#   $PRODUCT_PLUGIN \
-#   --master-ip=$MASTER_IP \
-#   --slave-ip=$SLAVE_IP \
-#   --redis-pass=$REDIS_PASS \
-#   --slave-instances=$SLAVE_INSTANCES \
-#   --errand-instances=1 \
-#   --pool-instances=$POOL_INSTANCES \
-#   --network-name=$NETWORK_NAME \
-#   --vm-size=$VM_SIZE \
-#   --stemcell-url=https://bosh.io/d/stemcells/bosh-vsphere-esxi-ubuntu-trusty-go_agent?v=3263.17 \
-#   --stemcell-ver=3263.17 \
-#   --stemcell-sha=70ca4e0f8a3602a53919cd4e8fd97770ed7da234 > manifest/deployment.yml
-
-
 bosh interpolate $project_dir/manifest/base.yml \
                  --vars-store secrets.yml \
                  --var="deployment-name=$DEPLOYMENT_NAME" \
@@ -52,8 +26,6 @@ bosh interpolate $project_dir/manifest/base.yml \
                  --var="vm-size=$VM_SIZE" \
                  --var-errs > manifest/deployment.yml
 
-cat manifest/deployment.yml
-
-bosh deploy manifest/deployment.yml
+bosh -n deploy -d $DEPLOYMENT_NAME manifest/deployment.yml
 
 #eof
