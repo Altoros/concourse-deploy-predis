@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+### Load env
+
 project_dir=$(readlink -f "$(dirname $0)/../..")
 source $project_dir/ci/utils/load-bosh-env.sh
 
@@ -15,6 +17,13 @@ SLAVE_INSTANCES=$(($(grep -o "," <<< "$SLAVE_IP" | wc -l)+1))
 MASTER_INSTANCES=$(($(grep -o "," <<< "$MASTER_IP" | wc -l)+1))
 POOL_INSTANCES=$((MASTER_INSTANCES + SLAVE_INSTANCES))
 
+### Upload Releases
+
+bosh upload-release https://bosh.io/d/github.com/pivotal-cf/cf-redis-release?v=428.0.0
+bosh upload-release https://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=0.143.0
+
+### Generate manifest
+
 bosh interpolate $project_dir/manifest/base.yml \
                  --vars-store secrets.yml \
                  --var="deployment-name=$DEPLOYMENT_NAME" \
@@ -25,6 +34,8 @@ bosh interpolate $project_dir/manifest/base.yml \
                  --var="slave-ip=$SLAVE_IP" \
                  --var="vm-size=$VM_SIZE" \
                  --var-errs > manifest/deployment.yml
+
+### Deploy
 
 bosh -n deploy -d $DEPLOYMENT_NAME manifest/deployment.yml
 
