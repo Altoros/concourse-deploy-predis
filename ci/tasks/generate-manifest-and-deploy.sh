@@ -52,6 +52,8 @@ bosh interpolate $project_dir/manifest/base.yml \
                  --var="vm-size=$VM_SIZE" \
                  --var-errs > manifest/deployment.yml
 
+cat manifest/deployment.yml
+
 bosh deploy manifest/deployment.yml
 
 #eof

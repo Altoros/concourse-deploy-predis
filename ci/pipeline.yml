@@ -140,7 +140,7 @@ jobs:
       params:
         globs:
         - {{stemcell-cpi-glob}}
-    - task: generate-manifest
+    - task: generate-manifest-and-deploy
       config:
         platform: linux
         image_resource:
@@ -148,7 +148,7 @@ jobs:
           source:
             repository: allomov/deploy-worker
         run:
-          path: pipeline-repo/ci/tasks/generate-manifest.sh
+          path: pipeline-repo/ci/tasks/generate-manifest-and-deploy.sh
         params:
           FOUNDATION_NAME: {{foundation-name}}
           DEPLOYMENT_NAME: {{deployment-name}}

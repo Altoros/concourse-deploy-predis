@@ -10,18 +10,18 @@ stemcells:
   version: latest
 
 instance_groups:
-- name: redis-leader-partition
+- name: redis-master-partition
   azs: [az1]
   stemcell: trusty
   vm_type: ((vm-size))
-  instances: ((leader-insrances-count))
+  instances: ((master-instances-count))
   jobs: 
   - name: redis
     release: redis
   networks:
   - name: ((network))
     static_ips:
-    - ((leader-ip))
+    - ((master-ip))
     properties:
       network: ((network))
       redis:
@@ -36,7 +36,7 @@ instance_groups:
   properties:
     network: ((network))
     redis:
-      master: ((leader-ip))
+      master: ((master-ip))
       password: ((redis-password))
   resource_pool: medium
   update:
@@ -54,7 +54,7 @@ instance_groups:
   properties:
     network: ((network))
     redis:
-      master: ((leader-ip))
+      master: ((master-ip))
       password: ((redis-password))
       slave: ((slave-ip))
   resource_pool: medium
@@ -70,13 +70,13 @@ instance_groups:
   - name: acceptance-tests
     release: redis
   lifeycle: errand
-    azs: [az1]
+  azs: [az1]
   stemcell: trusty
   vm_type: ((vm-size))
   properties:
     network: ((network))
     redis:
-      master: ((leader-ip))
+      master: ((master-ip))
       password: ((redis-password))
       slave: ((slave-ip))
   resource_pool: medium
