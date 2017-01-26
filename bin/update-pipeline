@@ -10,8 +10,6 @@ else
     exit 1
 fi
 
-# 
-
 source $project_dir/ci/utils/load-bosh-env.sh
 
 # if [[ -z $CONCOURSE_URI || -z $CONCOURSE_TARGET || -z $CONCOURSE_USER || -z $CONCOURSE_PASSWORD || \

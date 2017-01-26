@@ -119,6 +119,7 @@ jobs:
 - name: deploy
   plan:
     - get: pipeline-repo
+      passed: [upload-bosh-releases]
     - get: omg-cli
       passed: [upload-bosh-releases]
       params:
@@ -149,9 +150,9 @@ jobs:
         run:
           path: pipeline-repo/ci/tasks/generate-manifest.sh
         params:
+          FOUNDATION_NAME: {{foundation-name}}
           DEPLOYMENT_NAME: {{deployment-name}}
           PRODUCT_PLUGIN: {{product-plugin}}
-          STEMCELL_VERSION: {{stemcell-version}}
           VAULT_ADDR: {{vault-address}}
           VAULT_TOKEN: {{vault-token}}
           VAULT_HASH_IP: {{vault-hash-ip}}
@@ -160,38 +161,20 @@ jobs:
           VAULT_HASH_PASSWORD: {{vault-hash-passwords}}
           VAULT_HASH_BOSH: {{bosh-vault-hash}}
           VAULT_HASH_LIST: {{vault-hash-list}}
+          DEPLOYMENT_NAME: {{deployment-name}}
           OUTPUT_DIR: manifest
         inputs:
         - name: pipeline-repo
         - name: omg-cli
         - name: omg-product-bundle
+        - name: stemcells
         outputs:
         - name: manifest
-    - task: extract-tile
-      config:
-        platform: linux
-        image_resource:
-          type: docker-image
-          source:
-            repository: virtmerlin/deploy-worker
-        run:
-          path: pipeline-repo/ci/tasks/extract-tile.sh
-        params:
-          PRODUCT_DIR: {{product-name}}
-          OUTPUT_DIR: extracted-product
-        inputs:
-        - name: pipeline-repo
-        - name: {{product-name}}
-        outputs:
-        - name: extracted-product
-          path: ""
     - put: {{deployment-name}}
       params:
         manifest: manifest/deployment.yml
         stemcells:
         - stemcells/bosh-stemcell*.tgz
-        releases:
-        - extracted-product/releases/*.tgz
 - name: broker-registrar
   plan:
     - get: pipeline-repo
