@@ -20,4 +20,4 @@ export BOSH_CLIENT=$(vault read -field=bosh-client-id $VAULT_HASH_BOSH)
 export BOSH_CA_CERT=$(vault read -field=bosh-cacert $VAULT_HASH_BOSH)
 export BOSH_CLIENT_SECRET=$(vault read -field=bosh-client-secret $VAULT_HASH_BOSH)
 
-export BOSH_DEPLOYMENT=$PRODUCT_NAME
+export BOSH_DEPLOYMENT=$PRODUCT_NAME-$FOUNDATION_NAME

@@ -17,17 +17,17 @@ AZ=$(vault read --field=az $VAULT_HASH_PROPS)
 
 DEDICATED_NODES_COUNT=$(($(grep -o "," <<< "$DEDICATED_NODES_IPS" | wc -l)+1))
 
-### Upload Releases
+# ### Upload Releases
 
-bosh upload-release https://bosh.io/d/github.com/pivotal-cf/cf-redis-release?v=428.0.0
-bosh upload-release https://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=0.143.0
+# bosh upload-release https://bosh.io/d/github.com/pivotal-cf/cf-redis-release?v=428.0.0
+# bosh upload-release https://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=0.143.0
 
 ### Generate manifest
 mkdir -p manifest
 
 bosh interpolate $project_dir/manifest/base.yml \
              --vars-store secrets.yml \
-             --var="deployment-name=$DEPLOYMENT_NAME" \
+             --var="deployment-name=$BOSH_DEPLOYMENT" \
              --var="network-name=$NETWORK_NAME" \
              --var="vm-type=$VM_TYPE" \
              --var="disk-type=$DISK_TYPE" \
@@ -50,6 +50,6 @@ bosh interpolate $project_dir/manifest/base.yml \
 
 ### Deploy
 
-bosh -n deploy -d $DEPLOYMENT_NAME manifest/deployment.yml
+bosh -n deploy manifest/deployment.yml
 
 #eof
