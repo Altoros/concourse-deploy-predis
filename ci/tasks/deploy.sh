@@ -23,6 +23,7 @@ bosh upload-release https://bosh.io/d/github.com/pivotal-cf/cf-redis-release?v=4
 bosh upload-release https://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=0.143.0
 
 ### Generate manifest
+mkdir -p manifest
 
 bosh interpolate $project_dir/manifest/base.yml \
              --vars-store secrets.yml \
