@@ -24,28 +24,28 @@ bosh upload-release https://bosh.io/d/github.com/cloudfoundry-incubator/cf-routi
 
 ### Generate manifest
 
-    bosh interpolate $project_dir/manifest/base.yml \
-                 --vars-store secrets.yml \
-                 --var="deployment-name=$DEPLOYMENT_NAME" \
-                 --var="network-name=$NETWORK_NAME" \
-                 --var="vm-type=$VM_TYPE" \
-                 --var="disk-type=$DISK_TYPE" \
-                 --var="broker-ip=$BROKER_IP" \
-                 --var="cf-admin-username=$CF_ADMIN_USERNAME" \
-                 --var="cf-admin-password=$CF_ADMIN_PASSWORD" \
-                 --var="cf-apps-domain=$CF_APPS_DOMAIN" \
-                 --var="cf-system-domain=$CF_SYSTEM_DOMAIN" \
-                 --var="dedicated-nodes-count=$DEDICATED_NODES_COUNT" \
-                 --var="dedicated-nodes-ips=[$DEDICATED_NODES_IPS]" \
-                 --var="nats-ips=[$CF_NATS_IPS]" \
-                 --var="nats-port=$CF_NATS_PORT" \
-                 --var="nats-username=$CF_NATS_USERNAME" \
-                 --var="nats-password=$CF_NATS_PASSWORD" \
-                 --var="network-name=$NETWORK_NAME" \
-                 --var="syslog-aggregator-host=$SYSLOG_AGGREGATOR_HOST" \
-                 --var="syslog-aggregator-port=$SYSLOG_AGGREGATOR_PORT" \
-                 --var="az=$AZ" \
-                 --var-errs --var-errs-unused > manifest/deployment.yml
+bosh interpolate $project_dir/manifest/base.yml \
+             --vars-store secrets.yml \
+             --var="deployment-name=$DEPLOYMENT_NAME" \
+             --var="network-name=$NETWORK_NAME" \
+             --var="vm-type=$VM_TYPE" \
+             --var="disk-type=$DISK_TYPE" \
+             --var="broker-ip=$BROKER_IP" \
+             --var="cf-admin-username=$CF_ADMIN_USERNAME" \
+             --var="cf-admin-password=$CF_ADMIN_PASSWORD" \
+             --var="cf-apps-domain=$CF_APPS_DOMAIN" \
+             --var="cf-system-domain=$CF_SYSTEM_DOMAIN" \
+             --var="dedicated-nodes-count=$DEDICATED_NODES_COUNT" \
+             --var="dedicated-nodes-ips=[$DEDICATED_NODES_IPS]" \
+             --var="nats-ips=[$CF_NATS_IPS]" \
+             --var="nats-port=$CF_NATS_PORT" \
+             --var="nats-username=$CF_NATS_USERNAME" \
+             --var="nats-password=$CF_NATS_PASSWORD" \
+             --var="network-name=$NETWORK_NAME" \
+             --var="syslog-aggregator-host=$SYSLOG_AGGREGATOR_HOST" \
+             --var="syslog-aggregator-port=$SYSLOG_AGGREGATOR_PORT" \
+             --var="az=$AZ" \
+             --var-errs --var-errs-unused > manifest/deployment.yml
 
 ### Deploy
 

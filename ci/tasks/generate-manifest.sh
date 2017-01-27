@@ -45,7 +45,6 @@ bosh interpolate $project_dir/manifest/base.yml \
                  --vars-store secrets.yml \
                  --var="deployment-name=$DEPLOYMENT_NAME" \
                  --var="master-instances-count=$MASTER_INSTANCES" \
-                 --var="master-ip=$MASTER_IP" \
                  --var="network=$NETWORK_NAME" \
                  --var="redis-password=$REDIS_PASSWORD" \
                  --var="slave-ip=$SLAVE_IP" \

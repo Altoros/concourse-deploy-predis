@@ -27,7 +27,7 @@ jobs:
   - task: deploy
     file: pipeline-repo/ci/tasks/run-script.yml
     params: 
-      SCRIPT: ci/tasks/generate-manifest.sh
+      SCRIPT: ci/tasks/deploy.sh
       VAULT_ADDR: {{vault-address}}
       VAULT_TOKEN: {{vault-token}}
       FOUNDATION_NAME: {{foundation-name}}
