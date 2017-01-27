@@ -13,6 +13,7 @@ params:
   VAULT_ADDR:
   VAULT_TOKEN:
   FOUNDATION_NAME:
+  PRODUCT_NAME:
 
 inputs:
 - name: pipeline-repo
