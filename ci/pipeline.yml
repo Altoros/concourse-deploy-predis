@@ -28,6 +28,10 @@ jobs:
     file: pipeline-repo/ci/tasks/run-script.yml
     params: 
       SCRIPT: ci/tasks/generate-manifest.sh
+      VAULT_ADDR: {{vault-address}}
+      VAULT_TOKEN: {{vault-token}}
+      FOUNDATION_NAME: {{foundation-name}}
+      PRODUCT_NAME: {{product-name}}
 
 - name: broker-registrar
   plan:
@@ -38,6 +42,10 @@ jobs:
     params: 
       SCRIPT: ci/tasks/run-errand.sh
       ERRAND: broker-registrar
+      VAULT_ADDR: {{vault-address}}
+      VAULT_TOKEN: {{vault-token}}
+      FOUNDATION_NAME: {{foundation-name}}
+      PRODUCT_NAME: {{product-name}}
 
 - name: smoke-tests
   plan:
@@ -48,3 +56,7 @@ jobs:
     params: 
       SCRIPT: ci/tasks/run-errand.sh
       ERRAND: smoke-tests
+      VAULT_ADDR: {{vault-address}}
+      VAULT_TOKEN: {{vault-token}}
+      FOUNDATION_NAME: {{foundation-name}}
+      PRODUCT_NAME: {{product-name}}

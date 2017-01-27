@@ -9,11 +9,5 @@ image_resource:
 run:
   path: pipeline-repo/ci/tasks/run-script.sh
 
-params:
-  VAULT_ADDR: {{vault-address}}
-  VAULT_TOKEN: {{vault-token}}
-  FOUNDATION_NAME: {{foundation-name}}
-  PRODUCT_NAME: {{product-name}}
-
 inputs:
 - name: pipeline-repo
