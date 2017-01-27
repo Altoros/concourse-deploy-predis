@@ -1,12 +1,10 @@
 groups:
 - name: all
   jobs:
-  - upload-bosh-releases
   - deploy
   - broker-registrar
 - name: deploy
   jobs:
-  - upload-bosh-releases
   - deploy
 - name: errands
   jobs:
