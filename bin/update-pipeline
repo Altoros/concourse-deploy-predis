@@ -38,40 +38,30 @@ fly -t $CONCOURSE_TARGET login -c $CONCOURSE_URI -u $CONCOURSE_USER -p $CONCOURS
 
 fly -t $CONCOURSE_TARGET set-pipeline -p $PRODUCT_NAME-$FOUNDATION_NAME \
               --config="ci/pipeline.yml" \
-              --load-vars-from=ci/defaults/$CPI.yml \
-              --var="bosh-url=$BOSH_URL" \
-              --var="bosh-user=$BOSH_USERNAME" \
-              --var="bosh-pass=$BOSH_PASSWORD" \
-              --var="bosh-client-id=$BOSH_CLIENT" \
-              --var="bosh-client-secret=$BOSH_CLIENT_SECRET" \
-              --var="release-name=$RELEASE_NAME" \
-              --var="release-repository=$RELEASE_REPOSITORY" \
-              --var="bosh-cacert=$BOSH_CA_CERT" \
-              --var="foundation-name=$FOUNDATION_NAME" \
-              --var="pipeline-repo=$PIPELINE_REPO" \
-              --var="pipeline-repo-brunch=master" \
-              --var="product-version=$PRODUCT_VERSION" \
               --var="vault-address=$VAULT_ADDR" \
               --var="vault-token=$VAULT_TOKEN" \
+              --var="foundation-name=$FOUNDATION_NAME" \
               --var="deployment-name=$PRODUCT_NAME-$FOUNDATION_NAME" \
-              --var="pivotal-network-api-token=$PIVOTAL_NETWORK_API_TOKEN" \
-              --var="product-name=pivotal-redis-service" \
-              --var="product-slug=p-redis" \
-              --var="omg-product-slug=redis-plugin-linux" \
-              --var="pivotal-network-glob=p-redis-*" \
-              --var="omg-product-bundle-glob=redis-plugin-linux" \
-              --var="vault-props-path=secret/$PRODUCT_NAME-$FOUNDATION_NAME-props" \
-              --var="product-plugin=redis-plugin-linux" \
-              --var="bosh-vault-hash=secret/bosh-$FOUNDATION_NAME-props" \
-              --var="password-vault-hash=secret/$PRODUCT_NAME-$FOUNDATION_NAME-password" \
-              --var="props-vault-hash=secret/$PRODUCT_NAME-$FOUNDATION_NAME-props" \
-              --var="vault-hash-ip=secret/$PRODUCT_NAME-$FOUNDATION_NAME-ips" \
-              --var="vault-hash-hostvars=secret/$PRODUCT_NAME-$FOUNDATION_NAME-hostvars" \
-              --var="vault-hash-props=secret/$PRODUCT_NAME-$FOUNDATION_NAME-props" \
-              --var="vault-hash-passwords=secret/$PRODUCT_NAME-$FOUNDATION_NAME-passwords" \
-              --var="vault-hash-list=secret/cf-$FOUNDATION_NAME-props,secret/cf-$FOUNDATION_NAME-password" \
-              --var="props-vault-hash=secret/$PRODUCT_NAME-$FOUNDATION_NAME-props" \
-              --var="cf-vault-hash=secret/cf-$FOUNDATION_NAME-props,secret/cf-$FOUNDATION_NAME-password" \
+              --var="pipeline-repo=$PIPELINE_REPO" \
+              --var="pipeline-repo-brunch=master" \
+              # --var="pivotal-network-api-token=$PIVOTAL_NETWORK_API_TOKEN" \
+              # --var="product-name=pivotal-redis-service" \
+              # --var="product-slug=p-redis" \
+              # --var="omg-product-slug=redis-plugin-linux" \
+              # --var="pivotal-network-glob=p-redis-*" \
+              # --var="omg-product-bundle-glob=redis-plugin-linux" \
+              # --var="vault-props-path=secret/$PRODUCT_NAME-$FOUNDATION_NAME-props" \
+              # --var="product-plugin=redis-plugin-linux" \
+              # --var="bosh-vault-hash=secret/bosh-$FOUNDATION_NAME-props" \
+              # --var="password-vault-hash=secret/$PRODUCT_NAME-$FOUNDATION_NAME-password" \
+              # --var="props-vault-hash=secret/$PRODUCT_NAME-$FOUNDATION_NAME-props" \
+              # --var="vault-hash-ip=secret/$PRODUCT_NAME-$FOUNDATION_NAME-ips" \
+              # --var="vault-hash-hostvars=secret/$PRODUCT_NAME-$FOUNDATION_NAME-hostvars" \
+              # --var="vault-hash-props=secret/$PRODUCT_NAME-$FOUNDATION_NAME-props" \
+              # --var="vault-hash-passwords=secret/$PRODUCT_NAME-$FOUNDATION_NAME-passwords" \
+              # --var="vault-hash-list=secret/cf-$FOUNDATION_NAME-props,secret/cf-$FOUNDATION_NAME-password" \
+              # --var="props-vault-hash=secret/$PRODUCT_NAME-$FOUNDATION_NAME-props" \
+              # --var="cf-vault-hash=secret/cf-$FOUNDATION_NAME-props,secret/cf-$FOUNDATION_NAME-password" \
 
               # --var="skip-haproxy=false" \
               # --var="stemcell-cpi-glob='*vsphere*'" \

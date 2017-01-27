@@ -3,12 +3,14 @@ groups:
   jobs:
   - deploy
   - broker-registrar
+  - smoke-tests
 - name: deploy
   jobs:
   - deploy
 - name: errands
   jobs:
   - broker-registrar
+  - smoke-tests
 
 resources:
 - name: pipeline-repo

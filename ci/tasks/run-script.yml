@@ -10,10 +10,10 @@ run:
   path: pipeline-repo/$SCRIPT
 
 params:
-  VAULT_ADDR:
-  VAULT_TOKEN:
-  FOUNDATION_NAME:
-  PRODUCT_NAME:
+  VAULT_ADDR: {{vault-address}}
+  VAULT_TOKEN: {{vault-token}}
+  FOUNDATION_NAME: {{foundation-name}}
+  PRODUCT_NAME: {{product-name}}
 
 inputs:
 - name: pipeline-repo
