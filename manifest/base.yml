@@ -147,9 +147,13 @@ properties:
 
 releases:
 - name: cf-redis
-  version: latest
+  version: 428.0.0
+  url: https://bosh.io/d/github.com/pivotal-cf/cf-redis-release?v=428.0.0
+  sha: 1f7bdb330e19143a198fe4b1a25c3d8a2853bab7
 - name: routing
-  version: latest
+  version: 0.143.0
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=0.143.0
+  sha1: 74737a367b34df97161f56b427e2d291dbe54e38
 
 update:
   canaries: 1

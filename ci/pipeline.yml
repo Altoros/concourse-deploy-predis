@@ -19,132 +19,21 @@ resources:
   source:
     uri: {{pipeline-repo}}
     branch: {{pipeline-repo-brunch}}
-- name: stemcell
-  type: bosh-io-stemcell
-  source:
-    name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
-- name: {{release-name}}
-  type: bosh-io-release
-  source:
-    name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
 
 jobs:
-- name: upload-bosh-releases
-  plan:
-    - get: pipeline-repo
-    - get: omg-cli
-      params:
-        globs:
-        - omg-linux
-    - get: omg-product-bundle
-      trigger: true
-      params:
-        globs:
-        - {{omg-product-bundle-glob}}
-    - task: upload-bosh-releases
-      config:
-        platform: linux
-        image_resource:
-          type: docker-image
-          source:
-            repository: allomov/deploy-worker
-        run:
-          path: pipeline-repo/ci/tasks/opensource/upload-bosh-releases.sh
-        params:
-          PRODUCT_PLUGIN: {{product-plugin}}
-          OUTPUT_DIR: versions
-          VAULT_ADDR: {{vault-address}}
-          VAULT_TOKEN: {{vault-token}}
-          FOUNDATION_NAME: {{foundation-name}}
-          BOSH_VAULT_HASH: {{bosh-vault-hash}}
-        inputs:
-        - name: pipeline-repo
-        - name: omg-cli
-        - name: omg-product-bundle
-        # outputs:
-        # - name: versions
-    # - task: update-vault-with-version
-    #   config:
-    #     platform: linux
-    #     image_resource:
-    #       type: docker-image
-    #       source:
-    #         repository: allomov/deploy-worker
-    #     run:
-    #       path: pipeline-repo/ci/tasks/update-vault-with-version.sh
-    #     params:
-    #       VAULT_ADDR: {{vault-address}}
-    #       VAULT_TOKEN: {{vault-token}}
-    #       VAULT_PROPS_PATH: {{vault-props-path}}
-    #     inputs:
-    #     - name: pipeline-repo
-    #     - name: versions
-
 - name: deploy
   plan:
-    - get: pipeline-repo
-      passed: [upload-bosh-releases]
-    - get: omg-cli
-      passed: [upload-bosh-releases]
-      params:
-        globs:
-        - omg-linux
-    - get: omg-product-bundle
-      passed: [upload-bosh-releases]
-      trigger: true
-      params:
-        globs:
-        - {{omg-product-slug}} 
-    - get: {{product-name}}
-      params:
-        globs:
-        - {{pivotal-network-glob}}
-    - get: stemcells
-      trigger: true
-      params:
-        globs:
-        - {{stemcell-cpi-glob}}
-    - task: generate-manifest-and-deploy
-      config:
-        platform: linux
-        image_resource:
-          type: docker-image
-          source:
-            repository: allomov/deploy-worker
-        run:
-          path: pipeline-repo/ci/tasks/generate-manifest-and-deploy.sh
-        params:
-          FOUNDATION_NAME: {{foundation-name}}
-          DEPLOYMENT_NAME: {{deployment-name}}
-          PRODUCT_PLUGIN: {{product-plugin}}
-          VAULT_ADDR: {{vault-address}}
-          VAULT_TOKEN: {{vault-token}}
-          VAULT_HASH_IP: {{vault-hash-ip}}
-          VAULT_HASH_HOSTVARS: {{vault-hash-hostvars}}
-          VAULT_HASH_MISC: {{vault-hash-props}}
-          VAULT_HASH_PASSWORD: {{vault-hash-passwords}}
-          VAULT_HASH_BOSH: {{bosh-vault-hash}}
-          VAULT_HASH_LIST: {{vault-hash-list}}
-          DEPLOYMENT_NAME: {{deployment-name}}
-          OUTPUT_DIR: manifest
-        inputs:
-        - name: pipeline-repo
-        - name: omg-cli
-        - name: omg-product-bundle
-        - name: stemcells
-        outputs:
-        - name: manifest
-    - put: {{deployment-name}}
-      params:
-        manifest: manifest/deployment.yml
-        stemcells:
-        - stemcells/bosh-stemcell*.tgz
+  - get: pipeline-repo
+  - get: stemcell
+  - task: deploy
+    file: pipeline-repo/ci/tasks/run-script.yml
+    params: 
+      SCRIPT: ci/tasks/generate-manifest.sh
+
 - name: broker-registrar
   plan:
     - get: pipeline-repo
-    - get: {{deployment-name}}
-      trigger: true
-      passed: [deploy]
+      passed: deploy
     - task: broker-registrar
       config:
         platform: linux
@@ -157,9 +46,26 @@ jobs:
         params:
           VAULT_ADDR: {{vault-address}}
           VAULT_TOKEN: {{vault-token}}
-          VAULT_HASH_BOSH: {{bosh-vault-hash}}
-          BOSH_DEPLOYMENT_NAME: {{deployment-name}}
-          BOSH_ERRAND: broker-registrar
+          FOUNDATION_NAME: {{foundation-name}}
         inputs:
         - name: pipeline-repo
-        outputs:
+
+- name: smoke-tests
+  plan:
+    - get: pipeline-repo
+      passed: [broker-registrar]
+    - task: broker-registrar
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: allomov/deploy-worker
+        run:
+          path: pipeline-repo/ci/tasks/run-errand.sh
+        params:
+          VAULT_ADDR: {{vault-address}}
+          VAULT_TOKEN: {{vault-token}}
+          FOUNDATION_NAME: {{foundation-name}}
+        inputs:
+        - name: pipeline-repo
