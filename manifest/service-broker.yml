@@ -1,4 +1,0 @@
----
-applications:
-- name: redis-service-broker
-  buildpack: go_buildpack

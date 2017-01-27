@@ -5,17 +5,17 @@ set -e
 
 project_dir=$(readlink -f "$(dirname $0)/../..")
 source $project_dir/ci/utils/load-bosh-env.sh
+source $project_dir/ci/utils/load-cf-env.sh
 
 VAULT_HASH_PROPS=secret/redis-$FOUNDATION_NAME-props
-MASTER_IP=$(vault read --field=master-ip $VAULT_HASH_PROPS)
-SLAVE_IP=$(vault read --field=slave-ip $VAULT_HASH_PROPS)
-REDIS_PASSWORD=$(vault read --field=redis-pass $VAULT_HASH_PROPS)
+BROKER_IP=$(vault read --field=broker-ip $VAULT_HASH_PROPS)
+DEDICATED_NODES_IPS=$(vault read --field=dedicated-nodes-ips $VAULT_HASH_PROPS)
 NETWORK_NAME=$(vault read --field=network-name $VAULT_HASH_PROPS)
-VM_SIZE=$(vault read --field=vm-size $VAULT_HASH_PROPS)
+VM_TYPE=$(vault read --field=vm-type $VAULT_HASH_PROPS)
+DISK_TYPE=$(vault read --field=disk-type $VAULT_HASH_PROPS)
+AZ=$(vault read --field=az $VAULT_HASH_PROPS)
 
-SLAVE_INSTANCES=$(($(grep -o "," <<< "$SLAVE_IP" | wc -l)+1))
-MASTER_INSTANCES=$(($(grep -o "," <<< "$MASTER_IP" | wc -l)+1))
-POOL_INSTANCES=$((MASTER_INSTANCES + SLAVE_INSTANCES))
+DEDICATED_NODES_COUNT=$(($(grep -o "," <<< "$DEDICATED_NODES_IPS" | wc -l)+1))
 
 ### Upload Releases
 
@@ -24,16 +24,28 @@ bosh upload-release https://bosh.io/d/github.com/cloudfoundry-incubator/cf-routi
 
 ### Generate manifest
 
-bosh interpolate $project_dir/manifest/base.yml \
+    bosh interpolate $project_dir/manifest/base.yml \
                  --vars-store secrets.yml \
                  --var="deployment-name=$DEPLOYMENT_NAME" \
-                 --var="master-instances-count=$MASTER_INSTANCES" \
-                 --var="master-ip=$MASTER_IP" \
-                 --var="network=$NETWORK_NAME" \
-                 --var="redis-password=$REDIS_PASSWORD" \
-                 --var="slave-ip=$SLAVE_IP" \
-                 --var="vm-size=$VM_SIZE" \
-                 --var-errs > manifest/deployment.yml
+                 --var="network-name=$NETWORK_NAME" \
+                 --var="vm-type=$VM_TYPE" \
+                 --var="disk-type=$DISK_TYPE" \
+                 --var="broker-ip=$BROKER_IP" \
+                 --var="cf-admin-username=$CF_ADMIN_USERNAME" \
+                 --var="cf-admin-password=$CF_ADMIN_PASSWORD" \
+                 --var="cf-apps-domain=$CF_APPS_DOMAIN" \
+                 --var="cf-system-domain=$CF_SYSTEM_DOMAIN" \
+                 --var="dedicated-nodes-count=$DEDICATED_NODES_COUNT" \
+                 --var="dedicated-nodes-ips=[$DEDICATED_NODES_IPS]" \
+                 --var="nats-ips=[$CF_NATS_IPS]" \
+                 --var="nats-port=$CF_NATS_PORT" \
+                 --var="nats-username=$CF_NATS_USERNAME" \
+                 --var="nats-password=$CF_NATS_PASSWORD" \
+                 --var="network-name=$NETWORK_NAME" \
+                 --var="syslog-aggregator-host=$SYSLOG_AGGREGATOR_HOST" \
+                 --var="syslog-aggregator-port=$SYSLOG_AGGREGATOR_PORT" \
+                 --var="az=$AZ" \
+                 --var-errs --var-errs-unused > manifest/deployment.yml
 
 ### Deploy
 

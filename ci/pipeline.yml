@@ -13,56 +13,20 @@ groups:
   - broker-registrar
 
 resources:
-- name: {{product-name}}
-  type: pivnet
-  check_every: 4h
-  source:
-    api_token: {{pivotal-network-api-token}}
-    product_slug: {{product-slug}}
-    # TODO: add vault support here
-    product_version: {{product-version}}
-    sort_by: semver
 - name: pipeline-repo
   type: git
   check_every: 4h
   source:
     uri: {{pipeline-repo}}
     branch: {{pipeline-repo-brunch}}
-- name: omg-cli
-  type: github-release
-  check_every: 4h
+- name: stemcell
+  type: bosh-io-stemcell
   source:
-    user: enaml-ops
-    repository: omg-cli
-- name: omg-product-bundle
-  type: github-release
-  check_every: 4h
+    name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
+- name: {{release-name}}
+  type: bosh-io-release
   source:
-    user: enaml-ops
-    repository: omg-product-bundle
-- name: {{deployment-name}}
-  type: bosh-deployment
-  source:
-    # TODO: add vault support here
-    ca_cert: {{bosh-cacert}}
-    client_id: {{bosh-client-id}}
-    client_secret: {{bosh-client-secret}}
-    deployment: {{deployment-name}}
-    target: {{bosh-url}}
-- name: stemcells
-  type: pivnet
-  source:
-    # TODO: add vault support here
-    api_token: {{pivotal-network-api-token}}
-    product_slug: stemcells
-    product_version: {{stemcell-version}}
-
-resource_types:
-- name: pivnet
-  type: docker-image
-  source:
-    repository: pivotalcf/pivnet-resource
-    tag: latest-final
+    name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
 
 jobs:
 - name: upload-bosh-releases

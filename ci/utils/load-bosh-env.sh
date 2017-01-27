@@ -1,4 +1,6 @@
 
+echo "Loading Cloud Foundry environment"
+
 if [[ -z $VAULT_ADDR || -z $VAULT_TOKEN || -z $FOUNDATION_NAME ]]; then
   echo "ERROR: one of the following environment variables is not set: "
   echo ""
