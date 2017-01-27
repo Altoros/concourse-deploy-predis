@@ -30,6 +30,6 @@ export CF_NATS_PORT=4222
 export CF_NATS_USERNAME=nats
 export CF_NATS_PASSWORD=$(vault read -field=nats-pass $VAULT_HASH_CF_PASSWORDS)
 
-cf api $CF_API --skip-ssl-validation
-cf auth $CF_USERNAME $CF_PASSWORD
+cf api $CF_API_DOMAIN --skip-ssl-validation
+cf auth $CF_ADMIN_USERNAME $CF_ADMIN_PASSWORD
 cf target -o system -s system
