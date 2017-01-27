@@ -7,7 +7,7 @@ image_resource:
     repository: allomov/deploy-worker
 
 run:
-  path: pipeline-repo/$SCRIPT
+  path: pipeline-repo/ci/tasks/run-script.sh
 
 params:
   VAULT_ADDR: {{vault-address}}
