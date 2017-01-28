@@ -11,7 +11,7 @@ if [[ -z $VAULT_ADDR || -z $VAULT_TOKEN || -z $FOUNDATION_NAME ]]; then
   exit 1
 fi
 
-export VAULT_HASH_BOSH="secret/rabbitmq-$FOUNDATION_NAME-props"
+export VAULT_HASH_BOSH="secret/cf-$FOUNDATION_NAME-props"
 export BOSH_URL=$(vault read -field=bosh-url   $VAULT_HASH_BOSH)
 export BOSH_ENVIRONMENT=$BOSH_URL
 export BOSH_USERNAME=$(vault read -field=bosh-user $VAULT_HASH_BOSH)
