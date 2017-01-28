@@ -26,7 +26,7 @@ DEDICATED_NODES_COUNT=$(($(grep -o "," <<< "$DEDICATED_NODES_IPS" | wc -l)+1))
 mkdir -p manifest
 
 bosh interpolate $project_dir/manifest/base.yml \
-             --vars-store secrets.yml \
+             --vars-store manifest/vars.yml \
              --var="deployment-name=$BOSH_DEPLOYMENT" \
              --var="network-name=$NETWORK_NAME" \
              --var="vm-type=$VM_TYPE" \

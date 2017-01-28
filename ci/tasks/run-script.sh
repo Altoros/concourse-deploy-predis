@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -ex
+set -e
 
 if [[ -z $SCRIPT ]]; then
   echo "one the following environment variables is not set: "
