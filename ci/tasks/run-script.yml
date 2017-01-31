@@ -8,7 +8,7 @@ image_resource:
     tag: v1.0
 
 run:
-  path: pipeline-repo/ci/tasks/run-script.sh
+  path: pipeline-repo/ci/scripts/run-script.sh
 
 inputs:
 - name: pipeline-repo

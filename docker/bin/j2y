@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+require "json"
+require "yaml"
+
+json = File.read(ARGV.first)
+puts JSON.parse(json).to_yaml

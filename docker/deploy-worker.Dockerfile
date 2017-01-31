@@ -11,3 +11,6 @@ RUN chmod +x /usr/local/bin/cf
 RUN rm -rf /tmp/*
 
 RUN apt-get install -y jq
+
+COPY docker/bin/j2y /usr/local/bin
+COPY docker/bin/y2j /usr/local/bin

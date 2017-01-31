@@ -24,10 +24,18 @@ jobs:
 - name: deploy
   plan:
   - get: pipeline-repo
+  # - task: generate-manifest
+  #   file: pipeline-repo/ci/tasks/generate-manifest.yml
+  #   params: 
+  #     SCRIPT: ci/scripts/redis/generate-manifest.sh
+  #     VAULT_ADDR: {{vault-address}}
+  #     VAULT_TOKEN: {{vault-token}}
+  #     FOUNDATION_NAME: {{foundation-name}}
+  #     PRODUCT_NAME: {{product-name}}
   - task: deploy
     file: pipeline-repo/ci/tasks/run-script.yml
     params: 
-      SCRIPT: ci/tasks/deploy.sh
+      SCRIPT: ci/scripts/deploy.sh
       VAULT_ADDR: {{vault-address}}
       VAULT_TOKEN: {{vault-token}}
       FOUNDATION_NAME: {{foundation-name}}
@@ -40,7 +48,7 @@ jobs:
   - task: broker-registrar
     file: pipeline-repo/ci/tasks/run-script.yml
     params: 
-      SCRIPT: ci/tasks/run-errand.sh
+      SCRIPT: ci/scripts/run-errand.sh
       ERRAND: broker-registrar
       VAULT_ADDR: {{vault-address}}
       VAULT_TOKEN: {{vault-token}}
@@ -54,7 +62,7 @@ jobs:
   - task: broker-registrar
     file: pipeline-repo/ci/tasks/run-script.yml
     params: 
-      SCRIPT: ci/tasks/run-errand.sh
+      SCRIPT: ci/scripts/run-errand.sh
       ERRAND: smoke-tests
       VAULT_ADDR: {{vault-address}}
       VAULT_TOKEN: {{vault-token}}

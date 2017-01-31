@@ -8,11 +8,10 @@ image_resource:
     tag: v1.0
 
 run:
-  path: pipeline-repo/ci/scripts/generate-manifest.sh
+  path: pipeline-repo/ci/scripts/fetch-vault-values.sh
 
 inputs:
 - name: pipeline-repo
-- name: vault
 
 outputs:
-- name: manifest
+- name: vault
