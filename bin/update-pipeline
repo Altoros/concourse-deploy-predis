@@ -43,7 +43,8 @@ fly -t $CONCOURSE_TARGET set-pipeline -p $PRODUCT_NAME-$FOUNDATION_NAME \
               --var="foundation-name=$FOUNDATION_NAME" \
               --var="deployment-name=$PRODUCT_NAME-$FOUNDATION_NAME" \
               --var="pipeline-repo=$PIPELINE_REPO" \
-              --var="pipeline-repo-brunch=master" \
+              --var="pipeline-repo-branch=master" \
+              --var="pipeline-repo-private-key=$(cat $PIPELINE_REPO_PRIVATE_KEY_PATH)" \
               --var="product-name=$PRODUCT_NAME"
               # --var="pivotal-network-api-token=$PIVOTAL_NETWORK_API_TOKEN" \
               # --var="product-name=pivotal-redis-service" \
