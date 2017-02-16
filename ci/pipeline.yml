@@ -18,20 +18,14 @@ resources:
   check_every: 4h
   source:
     uri: {{pipeline-repo}}
-    branch: {{pipeline-repo-brunch}}
+    branch: {{pipeline-repo-branch}}
+    private_key: {{pipeline-repo-private-key}}
+    
 
 jobs:
 - name: deploy
   plan:
   - get: pipeline-repo
-  # - task: generate-manifest
-  #   file: pipeline-repo/ci/tasks/generate-manifest.yml
-  #   params: 
-  #     SCRIPT: ci/scripts/redis/generate-manifest.sh
-  #     VAULT_ADDR: {{vault-address}}
-  #     VAULT_TOKEN: {{vault-token}}
-  #     FOUNDATION_NAME: {{foundation-name}}
-  #     PRODUCT_NAME: {{product-name}}
   - task: deploy
     file: pipeline-repo/ci/tasks/run-script.yml
     params: 
