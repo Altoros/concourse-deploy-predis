@@ -12,6 +12,9 @@ fi
 
 source $project_dir/ci/utils/load-bosh-env.sh
 
+echo "write values to vault"
+vault write secret/$PRODUCT_NAME-$FOUNDATION_NAME-props @$project_dir/deployment-props.json
+
 # if [[ -z $CONCOURSE_URI || -z $CONCOURSE_TARGET || -z $CONCOURSE_USER || -z $CONCOURSE_PASSWORD || \
 #       -z $VAULT_ADDR || -z $VAULT_TOKEN || \
 #       -z $GIT_PRIVATE_KEY_PATH || -z $CONFIG_REPO || -z $FOUNDATION_NAME ]]; then

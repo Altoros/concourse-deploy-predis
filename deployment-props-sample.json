@@ -1,0 +1,11 @@
+{
+  "broker-ip": "x.x.x.x",
+  "dedicated-nodes-ips": "x.x.x.x,x.x.x.x",
+  "network-name": "pcf-services",
+  "az": "az1",
+  "vm-type": "medium",
+  "disk-type": "medium",
+  "syslog-aggregator-host": "x.x.x.x",
+  "syslog-aggregator-port": "514"
+}
+

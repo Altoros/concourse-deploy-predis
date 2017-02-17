@@ -17,6 +17,9 @@ AZ=$(vault read --field=az $VAULT_HASH_PROPS)
 
 DEDICATED_NODES_COUNT=$(($(grep -o "," <<< "$DEDICATED_NODES_IPS" | wc -l)+1))
 
+SYSLOG_AGGREGATOR_HOST=$(vault read --field=syslog-aggregator-host $VAULT_HASH_PROPS)
+SYSLOG_AGGREGATOR_PORT=$(vault read --field=syslog-aggregator-port $VAULT_HASH_PROPS)
+
 # ### Upload Releases
 
 # bosh upload-release https://bosh.io/d/github.com/pivotal-cf/cf-redis-release?v=428.0.0
